@@ -2,6 +2,42 @@
 #include "src/MPR/MPR121.h"
 #include <Wire.h>
 
+/**
+    Wiring:
+
+    1. VS1003
+    ------------------------------------
+    | VS1003  |  ESP32  | ESP32 (GPIO) |
+    ------------------------------------
+    |   SCLK  |   D18   |     18       |
+    |   MISO  |   D19   |     19       |
+    |   MOSI  |   D23   |     23       |
+    |   XRST  |   D5    |     5        |
+    |   CS    |   D4    |     4        |
+    |   XDCS  |   RX2   |     16       |
+    |   DREQ  |   TX2   |     17       |
+    |   5V    |   3.3V  |     3.3V     |
+    |   GND   |   GND   |     GND      |
+    ------------------------------------
+
+    2. MPR121 (2x)
+
+    Since we are using 2 MPR121 modules, we connect them to the same SPI bus.
+    The difference is in ADD pin, where one is empty (default address 0x5A), and the other
+    is connected to 3.3V which changes the address to 0x5B.
+
+    ------------------------------------
+    | MPR121  |  ESP32  | ESP32 (GPIO) |
+    ------------------------------------
+    |   IRQ   |   D33   |     33       |
+    |   SCL   |   D22   |     22       |
+    |   SDA   |   D21   |     21       |--------------------------
+    |   ADD   |   -     |     -        |    3.3V    |    3.3V    |
+    |   3.3V  |   3.3V  |     3.3V     |--------------------------
+    |   GND   |   GND   |     GND      |
+    ------------------------------------
+**/
+
 // MPR121
 #define INTERUPT_PIN 33
 #define numElectrodes 12
@@ -9,11 +45,12 @@
 MPR121_type MPR121_1;
 MPR121_type MPR121_2;
 
-// VS1003 Module pin definitions
+// VS1003 pin definitions
 #define VS_XCS 4   // Control Chip Select Pin (for accessing SPI Control/Status registers)
 #define VS_XDCS 16 // Data Chip Select / BSYNC Pin
 #define VS_DREQ 17 // Data Request Pin: Player asks for more data
 #define VS_RESET 5 // Reset is active low
+
 // VS10xx SPI pin connections
 // Provided here for info only - not used in the sketch as the SPI library handles this
 #define VS_MOSI 23
@@ -116,12 +153,12 @@ void loop()
             if (MPR121.isNewTouch(i))
             {
                 Serial.println(i);
-                vs10xx.noteOn(4, note, 127);
+                vs10xx.noteOn(0, note, 127);
             }
             else if (MPR121.isNewRelease(i))
             {
                 Serial.println(i);
-                vs10xx.noteOff(4, note, 127);
+                vs10xx.noteOff(0, note, 127);
             }
         }
     }
