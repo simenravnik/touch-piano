@@ -23,25 +23,6 @@ MPR121_type MPR121_2;
 
 VS10XX vs10xx(VS_XCS, VS_XDCS, VS_DREQ, VS_RESET, VS_SS);
 
-uint16_t MIDI_CHANNEL_FILTER = 0b1111111111111111;
-byte preset_instruments[16] = {
-    /* 01 */ 1,
-    /* 02 */ 9,
-    /* 03 */ 17,
-    /* 04 */ 25,
-    /* 05 */ 30,
-    /* 06 */ 33,
-    /* 07 */ 41,
-    /* 08 */ 49,
-    /* 09 */ 57,
-    /* 10 */ 0, // Channel 10 will be ignored later as that is percussion anyway.
-    /* 11 */ 65,
-    /* 12 */ 73,
-    /* 13 */ 81,
-    /* 14 */ 89,
-    /* 15 */ 113,
-    /* 16 */ 48};
-
 byte instrument;
 byte volume;
 
@@ -115,26 +96,11 @@ void setup()
     vs10xx.initialiseVS10xx();
     delay(1000);
 
-    vs10xx.initVS10xxChannels(preset_instruments, MIDI_CHANNEL_FILTER);
-
     // Set these invalid to trigger a read of the pots
     // (if being used) first time through.
     instrument = -1;
     volume = -1;
 }
-
-#define C 0
-#define C_sharp 1
-#define D 2
-#define D_sharp 3
-#define E 4
-#define F 5
-#define F_sharp 6
-#define G 7
-#define G_sharp 8
-#define A 9
-#define A_sharp 10
-#define B 11
 
 #define OCTAVE_1 48
 #define OCTAVE_2 60
@@ -150,12 +116,12 @@ void loop()
             if (MPR121.isNewTouch(i))
             {
                 Serial.println(i);
-                vs10xx.noteOn(2, note, 127);
+                vs10xx.noteOn(4, note, 127);
             }
             else if (MPR121.isNewRelease(i))
             {
                 Serial.println(i);
-                vs10xx.noteOff(2, note, 127);
+                vs10xx.noteOff(4, note, 127);
             }
         }
     }

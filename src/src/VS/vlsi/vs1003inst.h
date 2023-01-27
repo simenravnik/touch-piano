@@ -129,6 +129,33 @@ uint8_t vs1003voices[VS1003VOICES] = {
     VS1003_RVSCYMB, VS1003_FRET, VS1003_BREATH, VS1003_SEA,
     VS1003_BIRD, VS1003_PHONE, VS1003_HELI, VS1003_CLAPS, VS1003_GUN};
 
+// Use binary to say which MIDI channels this should respond to.
+// Every "1" here enables that channel. Set all bits for all channels.
+// Make sure the bit for channel 10 is set if you want drums.
+//
+//                                       16  12  8   4  1
+//                                       |   |   |   |  |
+uint16_t DEFAULT_MIDI_CHANNEL_FILTER = 0b1111111111111111;
+
+// List of instruments to send to any configured MIDI channels.
+byte default_preset_instruments[16] = {
+    /* 01 */ 1,
+    /* 02 */ 9,
+    /* 03 */ 17,
+    /* 04 */ 25,
+    /* 05 */ 30,
+    /* 06 */ 33,
+    /* 07 */ 41,
+    /* 08 */ 49,
+    /* 09 */ 57,
+    /* 10 */ 0, // Channel 10 will be ignored later as that is percussion anyway.
+    /* 11 */ 65,
+    /* 12 */ 73,
+    /* 13 */ 81,
+    /* 14 */ 89,
+    /* 15 */ 113,
+    /* 16 */ 48};
+
 /*
  * MIDI Instrument Definitions for the VS1003
  *   Defined in terms of GM Level 1 Drums (35 to 81)

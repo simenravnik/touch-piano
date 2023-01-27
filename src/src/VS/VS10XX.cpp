@@ -149,6 +149,9 @@ void VS10XX::initialiseVS10xx()
     // Set the default volume
     // VSWriteRegister(SCI_VOL, 0x20, 0x20);  // 0 = Maximum; 0xFEFE = silence
     VSStatus();
+
+    // Initialise each channel to contain one instrument
+    initVS10xxChannels(default_preset_instruments, DEFAULT_MIDI_CHANNEL_FILTER);
 }
 
 // This will read key status and mode registers from the VS10xx device
