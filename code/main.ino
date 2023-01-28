@@ -69,51 +69,37 @@ void setup()
     Serial.begin(115200);
     Serial.println("System started");
 
-    while (1)
+    if (!MPR121_2.begin(0x5A))
     {
-        if (!MPR121_2.begin(0x5A))
-        {
-            Serial.println("error setting up MPR121 2");
-        }
-        else
-        {
-            break;
-        }
+        Serial.println("error setting up MPR121 2");
     }
 
-    while (1)
+    if (!MPR121.begin(0x5B))
     {
-        if (!MPR121.begin(0x5B))
-        {
 
-            Serial.println("error setting up MPR121");
-            switch (MPR121.getError())
-            {
-            case NO_ERROR:
-                Serial.println("no error");
-                break;
-            case ADDRESS_UNKNOWN:
-                Serial.println("incorrect address");
-                break;
-            case READBACK_FAIL:
-                Serial.println("readback failure");
-                break;
-            case OVERCURRENT_FLAG:
-                Serial.println("overcurrent on REXT pin");
-                break;
-            case OUT_OF_RANGE:
-                Serial.println("electrode out of range");
-                break;
-            case NOT_INITED:
-                Serial.println("not initialised");
-                break;
-            default:
-                Serial.println("unknown error");
-                break;
-            }
-        }
-        else
+        Serial.println("error setting up MPR121");
+        switch (MPR121.getError())
         {
+        case NO_ERROR:
+            Serial.println("no error");
+            break;
+        case ADDRESS_UNKNOWN:
+            Serial.println("incorrect address");
+            break;
+        case READBACK_FAIL:
+            Serial.println("readback failure");
+            break;
+        case OVERCURRENT_FLAG:
+            Serial.println("overcurrent on REXT pin");
+            break;
+        case OUT_OF_RANGE:
+            Serial.println("electrode out of range");
+            break;
+        case NOT_INITED:
+            Serial.println("not initialised");
+            break;
+        default:
+            Serial.println("unknown error");
             break;
         }
     }
