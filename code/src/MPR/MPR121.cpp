@@ -55,6 +55,8 @@ extern "C"
 #define OVERCURRENT_FLAG_BIT 3
 #define OUT_OF_RANGE_BIT 4
 
+#define NUM_RESET_RETRIES 10
+
 MPR121_type::MPR121_type()
 {
   address = 0x5C; // default address is 0x5C, for use with Bare Conductive Touch Board
@@ -197,7 +199,17 @@ bool MPR121_type::begin(uint8_t address, uint8_t touchThreshold, uint8_t release
 
   error &= ~(1 << NOT_INITED_BIT); // clear NOT_INITED error flag
 
-  if (reset())
+  bool reset_success = false;
+  for (uint8_t i = 0; i < NUM_RESET_RETRIES; i++)
+  {
+    if (reset())
+    {
+      reset_success = true;
+      break;
+    }
+  }
+
+  if (reset_success)
   {
     // default values...
     applySettings(&defaultSettings);
@@ -309,14 +321,14 @@ bool MPR121_type::reset()
 
   setRegister(MPR121_SRST, 0x63); // soft reset
 
-  // if (getRegister(MPR121_AFE2) != 0x24)
-  // {
-  //   error |= 1 << READBACK_FAIL_BIT;
-  // }
-  // else
-  // {
-  //   error &= ~(1 << READBACK_FAIL_BIT);
-  // }
+  if (getRegister(MPR121_AFE2) != 0x24)
+  {
+    error |= 1 << READBACK_FAIL_BIT;
+  }
+  else
+  {
+    error &= ~(1 << READBACK_FAIL_BIT);
+  }
 
   if ((getRegister(MPR121_TS2) & 0x80) != 0)
   {
